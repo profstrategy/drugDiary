@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 
-export default function drugsearch(query) {
+const drugsearch = (query) => {
 
     const [brand, setBrand] = useState([])
     const [dosage, setDosage] = useState([])
@@ -9,6 +9,7 @@ export default function drugsearch(query) {
     const [geneName, setGeneName] = useState([])
     const [active, setActive] = useState([])
     const [route, setRoute] = useState([])
+    const [prodType, setProdtype] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
 
@@ -18,6 +19,7 @@ export default function drugsearch(query) {
         setGeneName([])
         setpharmClass([])
         setRoute([])
+        setProdtype([])
         setActive([])
         setError(() => { return false })
     }, [query])
@@ -33,7 +35,7 @@ export default function drugsearch(query) {
         }).then(res => {
 
             setGeneName(prevGeneName => {
-                return [...prevGeneName, ...res.data.results.map(result => result.generic_name)]
+                return [...prevGeneName, ...res.data.results.map((resut => resut.generic_name))]
             })
 
             setBrand(prevBrand => {
@@ -51,8 +53,12 @@ export default function drugsearch(query) {
                 return [...prevRoute, ...res.data.results.map(result => result.route)]
             })
 
+            setProdtype(prodType => {
+                return [...prodType, ...res.data.results.map(result => result.product_type)]
+            })
+
             setActive(prevActive => {
-              return[ ...prevActive, ...res.data.results.map(result => result.active_ingredients)]  
+              return[ ...prevActive, ...res.data.results.map(result => result.active_ingredients)]
             })
 
             console.log(res.data)
@@ -65,5 +71,7 @@ export default function drugsearch(query) {
 
         return () => Cancel()
     }, [query])
-    return { brand, loading, error, dosage, geneName, pharmClass, route, active }
+    return { brand, loading, error, dosage, geneName, pharmClass, route, active, prodType }
 }
+
+export default drugsearch
