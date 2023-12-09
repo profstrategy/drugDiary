@@ -10,6 +10,7 @@ const drugsearch = (query) => {
     const [active, setActive] = useState([])
     const [route, setRoute] = useState([])
     const [prodType, setProdtype] = useState([])
+    const [pack, setPack] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(false)
 
@@ -21,6 +22,7 @@ const drugsearch = (query) => {
         setRoute([])
         setProdtype([])
         setActive([])
+        setPack([])
         setError(() => { return false })
     }, [query])
 
@@ -29,7 +31,7 @@ const drugsearch = (query) => {
         let Cancel
         axios({
             method: 'GET',
-            url: "https://api.fda.gov/drug/ndc.json",
+            url: "https://api.fda.gov/drug/ndc.json?limit=1",
             params: { search: query },
             cancelToken: new axios.CancelToken(c => Cancel = c)
         }).then(res => {
@@ -61,6 +63,10 @@ const drugsearch = (query) => {
               return[ ...prevActive, ...res.data.results.map(result => result.active_ingredients)]
             })
 
+            setPack(prevpack => {
+                return[ ...prevpack, ...res.data.results.map(result => result.packaging)]
+              })
+
             console.log(res.data)
             setLoading(false)
         }).catch(error => {
@@ -71,7 +77,7 @@ const drugsearch = (query) => {
 
         return () => Cancel()
     }, [query])
-    return { brand, loading, error, dosage, geneName, pharmClass, route, active, prodType }
+    return { brand, loading, error, dosage, geneName, pharmClass, route, active, prodType, pack }
 }
 
 export default drugsearch
